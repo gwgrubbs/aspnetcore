@@ -157,7 +157,12 @@ namespace Microsoft.AspNetCore.E2ETesting
 
         private async Task<(IWebDriver browser, ILogs log)> CreateSauceBrowserAsync(string context, ITestOutputHelper output)
         {
-            var name = "Blazor E2E tests";
+            if (E2ETestOptions.Instance.Sauce == null)
+            {
+                throw new InvalidOperationException("SauceLabs environment variables not set.");
+            }
+
+            var name = E2ETestOptions.Instance.Sauce.TestName;
             if (!string.IsNullOrEmpty(context))
             {
                 name = $"{name} - {context}";
@@ -169,9 +174,9 @@ namespace Microsoft.AspNetCore.E2ETesting
             capabilities.SetCapability("tunnelIdentifier", E2ETestOptions.Instance.Sauce.TunnelIdentifier);
             capabilities.SetCapability("name", name);
 
-            capabilities.SetCapability("browserName", "Chrome");
-            capabilities.SetCapability("platform", "macOS 10.13");
-            capabilities.SetCapability("version", "latest");
+            capabilities.SetCapability("platform", E2ETestOptions.Instance.Sauce.Platform);
+            capabilities.SetCapability("browserName", E2ETestOptions.Instance.Sauce.BrowserName);
+            capabilities.SetCapability("version", E2ETestOptions.Instance.Sauce.BrowserVersion);
 
             await SauceConnectServer.StartAsync(output);
 
@@ -201,7 +206,7 @@ namespace Microsoft.AspNetCore.E2ETesting
 
             } while (attempt < maxAttempts);
 
-            throw new InvalidOperationException("Couldn't create a Selenium remote driver client. The server is irresponsive");
+            throw new InvalidOperationException("Couldn't create a SauceLabs remote driver client. The server is irresponsive");
         }
     }
 }

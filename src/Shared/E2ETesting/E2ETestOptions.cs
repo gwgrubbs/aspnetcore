@@ -70,6 +70,14 @@ namespace Microsoft.AspNetCore.E2ETesting
             public string TunnelIdentifier { get; set; }
 
             public string HostName { get; set; }
+
+            public string TestName { get; set; }
+
+            public string Platform { get; set; }
+
+            public string BrowserName { get; set; }
+
+            public string BrowserVersion { get; set; }
         }
     }
 }
